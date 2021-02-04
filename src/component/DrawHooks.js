@@ -29,7 +29,7 @@ function usePersistentCanvas() {
   return [locations, setLocations, canvasRef];
 }
 
-export function ScratchCard() {
+export function DrawHooks() {
   const [locations, setLocations, canvasRef] = usePersistentCanvas();
 
   function handleCanvasClick(e) {

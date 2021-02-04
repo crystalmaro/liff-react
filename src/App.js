@@ -3,16 +3,19 @@ import "./css/style.css";
 import { SearchBook } from "./component/SearchBook";
 import { GetLineProfile } from "./component/GetLineProfile";
 import { ShareLineButton } from "./component/ShareLineButton";
-import { ScratchCard } from "./component/ScratchCard";
+import { DrawHooks } from "./component/DrawHooks";
+import { Scratchcard } from "./component/Scratchcard";
 
 function App() {
   return (
     <div className="App">
-      <ScratchCard />
+      <Scratchcard />
       <hr />
       <GetLineProfile />
       <hr />
       <ShareLineButton />
+      <hr />
+      <DrawHooks />
       <hr />
       <SearchBook />
     </div>

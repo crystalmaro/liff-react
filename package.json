@@ -1,6 +1,8 @@
 {
-  "name": "react",
+  "name": "liff-react",
   "version": "0.0.0",
+  "description": "Fancy LIFF stuff",
+  "author": "Crystal Wang",
   "private": true,
   "dependencies": {
     "@line/liff": "^2.7.1",
