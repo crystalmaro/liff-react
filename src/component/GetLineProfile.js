@@ -1,21 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import liff from "@line/liff";
+import axios from "axios";
 import "../css/style.css";
 
 export function GetLineProfile() {
   const [count, setCount] = useState(0);
   const [profile, setProfile] = useState(0);
-  const [device, setDevice] = useState(0);
-  const [email, setEmail] = useState(0);
+  const [device, setDevice] = useState();
+  const [email, setEmail] = useState();
 
-  const initLine = event => {
-    console.log("initLine");
+  const initLine = () => {
     liff
-      .init({
-        liffId: "1655635109-E3bAe5pq"
-      })
+      .init({ liffId: "1655635109-E3bAe5pq" })
       .then(() => {
-        getProfile();
+        if (liff.isInClient()) getProfile();
+        else alert("not LINE client");
       })
       .catch(err => {
         alert(err);
@@ -23,15 +22,10 @@ export function GetLineProfile() {
   };
 
   const getProfile = () => {
-    if (liff.isInClient()) {
-      console.log("yes client");
-      liff.getProfile().then(response => {
-        setProfile(response);
-        setEmail(liff.getDecodedIDToken().email);
-      });
-    } else {
-      alert("not LINE client");
-    }
+    liff.getProfile().then(response => {
+      setProfile(response);
+      setEmail(liff.getDecodedIDToken().email);
+    });
   };
 
   const detectDevice = () => {

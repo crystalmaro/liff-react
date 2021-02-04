@@ -8,3 +8,15 @@ p {
   height: 50px;
   border-radius: 10px;
 }
+
+.scratch-card__wrapper {
+  margin: 0 auto;
+  text-align: center;
+  border: 4px solid black;
+}
+
+.scratch-card__canvas {
+  background: url(http://images.performgroup.com/di/library/sporting_news/9a/a1/stephen-curry-ftr-getty-imagesjpg_1w96fue8l2ti4191ele662qkh5.jpg?t=-710915087&w=960&quality=70)
+    no-repeat center center/100% 100%;
+  cursor: pointer;
+}
