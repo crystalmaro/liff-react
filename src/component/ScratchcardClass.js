@@ -3,7 +3,7 @@ import React, { Component, createRef } from "react";
 const HEIGHT = 480;
 const WIDTH = 640;
 
-export default class ScratchcardClass extends Component {
+class ScratchcardClass extends Component {
   state = {
     isDrawing: false,
     startX: 0,
@@ -86,3 +86,5 @@ export default class ScratchcardClass extends Component {
     );
   }
 }
+
+export default ScratchcardClass;

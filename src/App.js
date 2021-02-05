@@ -7,8 +7,8 @@ import { DrawHooks } from "./component/DrawHooks";
 import { ScratchcardHook } from "./component/ScratchcardHook";
 import { ScratchcardClass } from "./component/ScratchcardClass";
 
-const HEIGHT = 480;
-const WIDTH = 640;
+const HEIGHT = 240;
+const WIDTH = 320;
 
 export default class Scratchcard2 extends Component {
   state = {
@@ -30,10 +30,15 @@ export default class Scratchcard2 extends Component {
     canvas.addEventListener("touchmove", this.scratch);
     canvas.addEventListener("touchend", this.scratchEnd);
 
-    context.fillStyle = "yellow";
+    context.fillStyle = "blue";
     context.fillRect(0, 0, WIDTH, HEIGHT);
     context.lineWidth = 15;
     context.lineJoin = "round";
+
+    // this.cover = new Image();
+    // this.cover.src = "http://images.performgroup.com/di/library/sporting_news/9a/a1/stephen-curry-ftr-getty-imagesjpg_1w96fue8l2ti4191ele662qkh5.jpg?t=-710915087&w=960&quality=70"
+    // this.cover.onload = () => this.context.drawImage(this.cover, 0, 0, WIDTH, HEIGHT);
+  
   };
 
   componentWillUnmount = () => {
@@ -94,11 +99,12 @@ export default class Scratchcard2 extends Component {
   }
 }
 
+// <ScratchcardClass />
 
 function App() {
   return (
     <div className="App">
-      <ScratchcardClass />
+      
       <hr />
       <Scratchcard2 />
       <hr />
