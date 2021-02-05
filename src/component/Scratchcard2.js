@@ -1,102 +1,82 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import "../css/style.css";
 
-// const noop = o => o;
+// Code ported to react from https://edwardize.blogspot.com/2018/11/canvas-scratch-cards-vuejs.html
 
-export function Scratchcard2() {
-  const canvasRef = useRef(null);
-  const [isDrawing, setDrawingState] = useState(false);
-  const [lastPoint, setLastPoint] = useState(null);
+const HEIGHT = 480;
+const WIDTH = 640;
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    canvas.width = canvas.parentElement.offsetWidth;
-    canvas.height = canvas.parentElement.offsetHeight;
-    const cover = null;
+export default class Scratchcard2 extends React.Component {
+  constructor(props) {
+    super(props);
 
-    canvas.addEventListener("mousedown", touchStart);
-    canvas.addEventListener("touchstart", touchStart);
-    canvas.addEventListener("mousemove", touchMove);
-    canvas.addEventListener("touchmove", touchMove);
-    canvas.addEventListener("mouseup", touchEnd);
-    canvas.addEventListener("touchend", touchEnd);
-
-    const ctx = canvas.getContext("2d");
-
-    // cover = new Image();
-    // cover.src = require('../images/scratch-cover.png');
-    // cover.onload = () => ctx.drawImage(cover, 0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "yellow";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    return () => {
-      // const canvas = canvasRef.current;
-      canvas.removeEventListener('mousedown', touchStart);
-      canvas.removeEventListener('touchstart', touchStart);
-      canvas.removeEventListener('mousemove', touchMove);
-      canvas.removeEventListener('touchmove', touchMove);
-      canvas.removeEventListener('mouseup', touchEnd);
-      canvas.removeEventListener('touchend', touchEnd);
-    }
-  });
-
-  const getPosition = e => {
-    const canvas = canvasRef.current;
-    // let offsetX = 0
-    let { offsetX, offsetY} = 0
-    if (target.offsetParent !== undefined) {
-      while (target = target.offsetParent) {
-        offsetX += target.offsetLeft;
-        offsetY += target.offsetTop;
-      }
-    }
-
-    const x = (e.pageX || e.touches[0].clientX) - offsetX;
-    const y = (e.pageY || e.touches[0].clientY) - offsetY;
-    return {x, y};
+    this.state = {
+      isDrawing: false,
+      startX: 0,
+      startY: 0
+    };
+    this.canvasRef = React.createRef();
   }
 
-  const touchStart = e => {
-    const ctx = canvasRef.current.getContext("2d");
-    setDrawingState(true);
-    setLastPoint(getPosition(e));
-    ctx.globalCompositeOperation = 'destination-out';
+  componentDidMount = () => {
+    const canvas = this.canvasRef.current;
+    const context = canvas.getContext("2d");
+
+    canvas.addEventListener("mousedown", this.scratchStart);
+    canvas.addEventListener("mousemove", this.scratch);
+    canvas.addEventListener("mouseup", this.scratchEnd);
+
+    canvas.addEventListener("touchstart", this.scratchStart);
+    canvas.addEventListener("touchmove", this.scratch);
+    canvas.addEventListener("touchend", this.scratchEnd);
+
+    context.fillStyle = "pink";
+    context.fillRect(0, 0, WIDTH, HEIGHT);
+    context.lineWidth = 15;
+    context.lineJoin = "round";
   };
 
-  const touchMove = e => {
-    if (!isDrawing) return;
-    e.preventDefault();
+  scratchStart = e => {
+    const { layerX, layerY } = e;
 
-    const ctx = canvasRef.current.getContext("2d");
-    const a = lastPoint;
-    const b = getPosition(e);
-    const dist = Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
-    const angle = Math.atan2(b.x - a.x, b.y - a.y);
-    const offsetX = this.brush.width / 2;
-    const offsetY = this.brush.height / 2;
-    
-    for (let x, y, i = 0; i < dist; i++) {
-      x = a.x + (Math.sin(angle) * i) - offsetX;
-      y = a.y + (Math.cos(angle) * i) - offsetY;
-      ctx.drawImage(this.brush, x, y);
-    }
-
-
-
+    this.setState({
+      isDrawing: true,
+      startX: layerX,
+      startY: layerY
+    });
   };
 
-  const touchEnd = e => {};
+  scratch = e => {
+    const { layerX, layerY } = e;
+    const context = this.canvasRef.current.getContext("2d");
 
-  return (
-    <>
-      <div className="scratch-card__wrapper">
-        <canvas
-          ref={canvasRef}
-          width={window.innerWidth}
-          height={window.innerHeight / 2}
-        />
-      </div>
-    </>
-  );
+    if (!this.state.isDrawing) return;
+
+    context.globalCompositeOperation = "destination-out";
+    context.beginPath();
+    context.moveTo(this.state.startX, this.state.startY);
+    context.lineTo(layerX, layerY);
+    context.closePath();
+    context.stroke();
+
+    this.setState({
+      startX: layerX,
+      startY: layerY
+    });
+  };
+
+  scratchEnd = e => {
+    this.setState({ isDrawing: false });
+  };
+
+  render() {
+    return (
+      <canvas
+        ref={this.canvasRef}
+        id="canvas"
+        width={`${WIDTH}px`}
+        height={`${HEIGHT}px`}
+      />
+    );
+  }
 }
