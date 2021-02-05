@@ -1,22 +1,15 @@
-import React from "react";
-import "../css/style.css";
-
-// Code ported to react from https://edwardize.blogspot.com/2018/11/canvas-scratch-cards-vuejs.html
+import React, { Component, createRef } from "react";
 
 const HEIGHT = 480;
 const WIDTH = 640;
 
-export default class Scratchcard2 extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isDrawing: false,
-      startX: 0,
-      startY: 0
-    };
-    this.canvasRef = React.createRef();
-  }
+export default class ScratchcardClass extends Component {
+  state = {
+    isDrawing: false,
+    startX: 0,
+    startY: 0
+  };
+  canvasRef = createRef();
 
   componentDidMount = () => {
     const canvas = this.canvasRef.current;
@@ -34,6 +27,16 @@ export default class Scratchcard2 extends React.Component {
     context.fillRect(0, 0, WIDTH, HEIGHT);
     context.lineWidth = 15;
     context.lineJoin = "round";
+  };
+
+  componentWillUnmount = () => {
+    canvas.removeEventListener("mousedown", this.scratchStart);
+    canvas.removeEventListener("mousemove", this.scratch);
+    canvas.removeEventListener("mouseup", this.scratchEnd);
+
+    canvas.removeEventListener("touchstart", this.scratchStart);
+    canvas.removeEventListener("touchmove", this.scratch);
+    canvas.removeEventListener("touchend", this.scratchEnd);
   };
 
   scratchStart = e => {
@@ -71,12 +74,15 @@ export default class Scratchcard2 extends React.Component {
 
   render() {
     return (
-      <canvas
-        ref={this.canvasRef}
-        id="canvas"
-        width={`${WIDTH}px`}
-        height={`${HEIGHT}px`}
-      />
+      <div className="scratch-card__wrapper">
+        <canvas
+          ref={this.canvasRef}
+          id="canvas"
+          className="scratch-card__canvas"
+          width={`${WIDTH}px`}
+          height={`${HEIGHT}px`}
+        />
+      </div>
     );
   }
 }

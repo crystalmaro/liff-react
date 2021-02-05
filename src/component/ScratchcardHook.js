@@ -4,11 +4,11 @@ import "../css/style.css";
 const HEIGHT = 240;
 const WIDTH = 320;
 
-export function Scratchcard() {
+export function ScratchcardHook() {
   const [isDrawing, setDrawingState] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
-  const canvasRef = useRef(null);
+  const canvasRef = useRef();
   const [locations, setLocations] = useState([]);
 
   const [lastX, setLastX] = useState(0);
@@ -84,7 +84,7 @@ export function Scratchcard() {
 
   return (
     <>
-      <h3>Scratchcard.js</h3>
+      <h3>ScratchcardHook.js</h3>
       <div className="scratch-card__wrapper">
         <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} />
       </div>
