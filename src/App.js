@@ -10,103 +10,126 @@ import { ScratchcardClass } from "./component/ScratchcardClass";
 const HEIGHT = 240;
 const WIDTH = 320;
 
-export default class Scratchcard2 extends Component {
+// const noop = o => o;
+export default class ScratchOff extends Component {
   state = {
     isDrawing: false,
-    startX: 0,
-    startY: 0
+    lastPoint: null
+  }
+  // constructor(props) {
+  //   super(props);
+  //   this.isDrawing = false;
+  //   this.lastPoint = null;
+  //   // this.touchStart = this.touchStart.bind(this);
+  //   // this.touchMove = this.touchMove.bind(this);
+  //   // this.touchEnd = this.touchEnd.bind(this);
+  // }
+
+  componentDidMount() {    
+    const canvas = this.canvas;
+    canvas.width = canvas.parentElement.offsetWidth;
+    canvas.height = canvas.parentElement.offsetHeight;
+
+    canvas.addEventListener('mousedown', this.touchStart);
+    canvas.addEventListener('touchstart', this.touchStart);
+    canvas.addEventListener('mousemove', this.touchMove);
+    canvas.addEventListener('touchmove', this.touchMove);
+    canvas.addEventListener('mouseup', this.touchEnd);
+    canvas.addEventListener('touchend', this.touchEnd);
+    
+    this.ctx = canvas.getContext('2d');
+
+    this.brush = new Image();
+    // this.brush.src = "https://i.ibb.co/wczc04k/scratch-brush.png"
+    this.brush.src = "https://i.ibb.co/jvJwwSL/rsz-scratch-brush.png"
+
+    this.cover = new Image();
+    this.cover.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJUfpqnOLlKhnWKJF7RiuFniQeCdwfnu6ZEg&usqp=CAU"
+    this.cover.onload = () => this.ctx.drawImage(this.cover, 0, 0, canvas.width, canvas.height);
   };
-  canvasRef = createRef();
 
-  componentDidMount = () => {
-    const canvas = this.canvasRef.current;
-    const context = canvas.getContext("2d");
-
-    canvas.addEventListener("mousedown", this.scratchStart);
-    canvas.addEventListener("mousemove", this.scratch);
-    canvas.addEventListener("mouseup", this.scratchEnd);
-
-    canvas.addEventListener("touchstart", this.scratchStart);
-    canvas.addEventListener("touchmove", this.scratch);
-    canvas.addEventListener("touchend", this.scratchEnd);
-
-    context.fillStyle = "blue";
-    context.fillRect(0, 0, WIDTH, HEIGHT);
-    context.lineWidth = 15;
-    context.lineJoin = "round";
-
-    // this.cover = new Image();
-    // this.cover.src = "http://images.performgroup.com/di/library/sporting_news/9a/a1/stephen-curry-ftr-getty-imagesjpg_1w96fue8l2ti4191ele662qkh5.jpg?t=-710915087&w=960&quality=70"
-    // this.cover.onload = () => this.context.drawImage(this.cover, 0, 0, WIDTH, HEIGHT);
-  
-  };
-
-  componentWillUnmount = () => {
-    canvas.removeEventListener("mousedown", this.scratchStart);
-    canvas.removeEventListener("mousemove", this.scratch);
-    canvas.removeEventListener("mouseup", this.scratchEnd);
-
-    canvas.removeEventListener("touchstart", this.scratchStart);
-    canvas.removeEventListener("touchmove", this.scratch);
-    canvas.removeEventListener("touchend", this.scratchEnd);
+   componentWillUnmount() {
+    const canvas = this.canvas;
+    canvas.removeEventListener('mousedown', this.touchStart);
+    canvas.removeEventListener('touchstart', this.touchStart);
+    canvas.removeEventListener('mousemove', this.touchMove);
+    canvas.removeEventListener('touchmove', this.touchMove);
+    canvas.removeEventListener('mouseup', this.touchEnd);
+    canvas.removeEventListener('touchend', this.touchEnd);
   }
 
-  scratchStart = e => {
-    const { layerX, layerY } = e;
+  getPosition = (event) => {
+  // getPosition(event) {
+    let target = this.canvas;
+    let offsetX = 0;
+    let offsetY = 0;
+    
+    if (target.offsetParent !== undefined) {
+      while (target = target.offsetParent) {
+        offsetX += target.offsetLeft;
+        offsetY += target.offsetTop;
+      }
+    }
 
-    this.setState({
-      isDrawing: true,
-      startX: layerX,
-      startY: layerY
-    });
-  };
+    const x = (event.pageX || event.touches[0].clientX) - offsetX;
+    const y = (event.pageY || event.touches[0].clientY) - offsetY;
+    return {x, y};
+  }
 
-  scratch = e => {
-    const { layerX, layerY } = e;
-    const context = this.canvasRef.current.getContext("2d");
+  touchStart = (event) => {
+    this.isDrawing = true;
+    this.lastPoint = this.getPosition(event);
+    this.ctx.globalCompositeOperation = 'destination-out';
+  }
 
-    if (!this.state.isDrawing) return;
+  touchMove = (event) => {
+    if (!this.isDrawing) return;
+    event.preventDefault();
 
-    context.globalCompositeOperation = "destination-out";
-    context.beginPath();
-    context.moveTo(this.state.startX, this.state.startY);
-    context.lineTo(layerX, layerY);
-    context.closePath();
-    context.stroke();
+    const ctx = this.ctx;    
+    const a = this.lastPoint;
+    const b = this.getPosition(event);
+    const dist = Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
+    const angle = Math.atan2(b.x - a.x, b.y - a.y);
+    const offsetX = this.brush.width / 2;
+    const offsetY = this.brush.height / 2;
+    
+    for (let x, y, i = 0; i < dist; i++) {
+      x = a.x + (Math.sin(angle) * i) - offsetX;
+      y = a.y + (Math.cos(angle) * i) - offsetY;
+      ctx.drawImage(this.brush, x, y);
+    }
 
-    this.setState({
-      startX: layerX,
-      startY: layerY
-    });
-  };
+    this.lastPoint = b;
+  }
 
-  scratchEnd = e => {
-    this.setState({isDrawing: false});
-  };
+  touchEnd = (event) => {
+
+    this.isDrawing = false;
+  }
 
   render() {
     return (
-      <div className="scratch-card__wrapper">
-        <canvas
-          ref={this.canvasRef}
-          id="canvas"
-          className="scratch-card__canvas"
-          width={`${WIDTH}px`}
-          height={`${HEIGHT}px`}
-        />
+      <div style={{position:'relative',width:300,height:300,border:'1px solid red'}}>
+        <canvas 
+          style={{position:'absolute',zIndex:2,width:'100%',height:'100%'}}
+          ref={el => this.canvas = el} />
+        <div className="secret absolute fill no-select flex justify-center items-center">
+          {this.props.children}
+        </div>
       </div>
     );
   }
 }
 
-// <ScratchcardClass />
+const secret = Math.random().toString(16).slice(2, 7).toUpperCase();
 
 function App() {
   return (
     <div className="App">
-      
+  
       <hr />
-      <Scratchcard2 />
+      <ScratchOff>{secret}</ScratchOff>
       <hr />
       <ScratchcardHook />
       <hr />

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import liff from "@line/liff";
-import axios from "axios";
 import "../css/style.css";
+
+const liffId = "1655635109-E3bAe5pq";
 
 export function GetLineProfile() {
   const [count, setCount] = useState(0);
@@ -9,12 +10,22 @@ export function GetLineProfile() {
   const [device, setDevice] = useState();
   const [email, setEmail] = useState();
 
+  useEffect(() => {
+    initLine();
+    detectDevice();
+  }, []);
+
   const initLine = () => {
+    console.log("init line");
     liff
-      .init({ liffId: "1655635109-E3bAe5pq" })
+      .init({ liffId: liffId })
       .then(() => {
-        if (liff.isInClient()) getProfile();
-        else alert("not LINE client");
+        if (liff.isInClient()) {
+          getProfile();
+          getFriendship();
+        } else {
+          alert("not LINE client");
+        }
       })
       .catch(err => {
         alert(err);
@@ -25,6 +36,19 @@ export function GetLineProfile() {
     liff.getProfile().then(response => {
       setProfile(response);
       setEmail(liff.getDecodedIDToken().email);
+    });
+  };
+
+  const getFriendship = () => {
+    liff.getFriendship().then(data => {
+      if (data.friendFlag) {
+        alert(JSON.stringify(data));
+      } else {
+        alert(JSON.stringify(data));
+        // Redirect users to the LINE Login authorization URL with the bot_prompt query parameter below
+        // https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id={1655635109}&redirect_uri={CALLBACK_URL}&state={STATE}&bot_prompt=normal&scope=profile%20openid%20email
+        // state: unique alphanumeric string to prevent cross-site request forgery (opens new window). should generate a random value for each login session Math.random().toString(36).slice(2)
+      }
     });
   };
 
@@ -39,11 +63,7 @@ export function GetLineProfile() {
         <p>Click {count} times</p>
         <button onClick={() => setCount(count + 1)}>++</button>
         <p>
-          <button onClick={initLine}>init LINE</button>
-        </p>
-        <p>
-          <button onClick={detectDevice}>detect device</button>
-          {device === 0 ? "" : device}
+          Device: {device === 0 ? "" : device}
         </p>
       </section>
       <section>

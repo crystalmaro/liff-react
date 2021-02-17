@@ -5,18 +5,9 @@
   "author": "Crystal Wang",
   "private": true,
   "dependencies": {
-    "@babel/core": "^7.12.13",
-    "@babel/plugin-proposal-class-properties": "^7.12.13",
-    "@babel/plugin-proposal-decorators": "^7.12.13",
     "@line/liff": "^2.7.1",
-    "babel-loader": "^8.2.2",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
-    "style-loader": "^2.0.0",
-    "webpack": "^5.20.2",
-    "webpack-cli": "^4.5.0",
-    "webpack-dev-server": "^3.11.2",
-    "react-scripts": "latest"
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -24,16 +15,5 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "devDependencies": {
-    
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ],
-    "plugins": [
-      "@babel/plugin-proposal-class-properties"
-    ]
-  }
+  "devDependencies": {}
 }
