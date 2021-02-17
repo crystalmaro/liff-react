@@ -138,22 +138,14 @@ const prizeImg = 'https://community.canvaslms.com/t5/image/serverpage/avatar-nam
 function App() {
   return (
     <div className="App">
-  
-      <hr />
       <ScratchOff>
         <img 
         src={prizeImg} />
       </ScratchOff>
       <hr />
-      <ScratchcardHook />
-      <hr />
       <GetLineProfile />
       <hr />
-      <ShareLineButton />
-      <hr />
-      <DrawHooks />
-      <hr />
-      <SearchBook />
+      <ShareLineButton />      
     </div>
   );
 }
