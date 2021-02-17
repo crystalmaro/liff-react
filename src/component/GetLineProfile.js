@@ -16,7 +16,6 @@ export function GetLineProfile() {
   }, []);
 
   const initLine = () => {
-    console.log("init line");
     liff
       .init({ liffId: liffId })
       .then(() => {
@@ -24,7 +23,7 @@ export function GetLineProfile() {
           getProfile();
           getFriendship();
         } else {
-          alert("not LINE client");
+          console.log("not LINE client");
         }
       })
       .catch(err => {
@@ -42,9 +41,9 @@ export function GetLineProfile() {
   const getFriendship = () => {
     liff.getFriendship().then(data => {
       if (data.friendFlag) {
-        alert(JSON.stringify(data));
+        console.log(JSON.stringify(data));
       } else {
-        alert(JSON.stringify(data));
+        console.log(JSON.stringify(data));
         // Redirect users to the LINE Login authorization URL with the bot_prompt query parameter below
         // https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id={1655635109}&redirect_uri={CALLBACK_URL}&state={STATE}&bot_prompt=normal&scope=profile%20openid%20email
         // state: unique alphanumeric string to prevent cross-site request forgery (opens new window). should generate a random value for each login session Math.random().toString(36).slice(2)
@@ -62,9 +61,7 @@ export function GetLineProfile() {
       <section>
         <p>Click {count} times</p>
         <button onClick={() => setCount(count + 1)}>++</button>
-        <p>
-          Device: {device === 0 ? "" : device}
-        </p>
+        <p>Device: {device === 0 ? "" : device}</p>
       </section>
       <section>
         <img

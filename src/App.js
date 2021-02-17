@@ -16,16 +16,8 @@ export default class ScratchOff extends Component {
     isDrawing: false,
     lastPoint: null
   }
-  // constructor(props) {
-  //   super(props);
-  //   this.isDrawing = false;
-  //   this.lastPoint = null;
-  //   // this.touchStart = this.touchStart.bind(this);
-  //   // this.touchMove = this.touchMove.bind(this);
-  //   // this.touchEnd = this.touchEnd.bind(this);
-  // }
 
-  componentDidMount() {    
+  componentDidMount() {
     const canvas = this.canvas;
     canvas.width = canvas.parentElement.offsetWidth;
     canvas.height = canvas.parentElement.offsetHeight;
@@ -38,14 +30,17 @@ export default class ScratchOff extends Component {
     canvas.addEventListener('touchend', this.touchEnd);
     
     this.ctx = canvas.getContext('2d');
+    // this.ctx.crossOrigin = "Anonymous";
 
     this.brush = new Image();
-    // this.brush.src = "https://i.ibb.co/wczc04k/scratch-brush.png"
-    this.brush.src = "https://i.ibb.co/jvJwwSL/rsz-scratch-brush.png"
+    this.brush.src = "https://i.ibb.co/wczc04k/scratch-brush.png"
+    // this.brush.src = "https://i.ibb.co/jvJwwSL/rsz-scratch-brush.png"
+    this.brush.crossOrigin = "Anonymous";
 
     this.cover = new Image();
     this.cover.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJUfpqnOLlKhnWKJF7RiuFniQeCdwfnu6ZEg&usqp=CAU"
     this.cover.onload = () => this.ctx.drawImage(this.cover, 0, 0, canvas.width, canvas.height);
+    this.cover.crossOrigin = "Anonymous";
   };
 
    componentWillUnmount() {
@@ -58,8 +53,23 @@ export default class ScratchOff extends Component {
     canvas.removeEventListener('touchend', this.touchEnd);
   }
 
+  checkFilledPercent = () => {
+    //  use getImageData and check the total number of pixels that is transparent
+    // this.ctx = canvas.getContext('2d');
+    const data = this.ctx.getImageData(0, 0, this.canvas.parentElement.offsetWidth, this.canvas.parentElement.offsetHeight).data;
+    const nrOfPixels = data.length / 4; // rgba pixels
+    let transparent = 0;
+    for (let i = 3; i < data.length; i += 4) {
+      transparent += data[i] ? 0 : 1;
+    }
+    const percentage = transparent / nrOfPixels * 100;
+    if (percentage > 20) {
+      console.log(percentage)
+      alert('scratched over 20%')
+    }
+  }
+
   getPosition = (event) => {
-  // getPosition(event) {
     let target = this.canvas;
     let offsetX = 0;
     let offsetY = 0;
@@ -104,8 +114,8 @@ export default class ScratchOff extends Component {
   }
 
   touchEnd = (event) => {
-
     this.isDrawing = false;
+    this.checkFilledPercent();
   }
 
   render() {
@@ -122,14 +132,18 @@ export default class ScratchOff extends Component {
   }
 }
 
-const secret = Math.random().toString(16).slice(2, 7).toUpperCase();
+const prizeImg = 'https://community.canvaslms.com/t5/image/serverpage/avatar-name/panda4/avatar-theme/candy/avatar-collection/Pandas/avatar-display-size/message/version/2?xdesc=1.0' 
+// const secret = Math.random().toString(16).slice(2, 7).toUpperCase();
 
 function App() {
   return (
     <div className="App">
   
       <hr />
-      <ScratchOff>{secret}</ScratchOff>
+      <ScratchOff>
+        <img 
+        src={prizeImg} />
+      </ScratchOff>
       <hr />
       <ScratchcardHook />
       <hr />
